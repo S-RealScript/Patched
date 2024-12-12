@@ -1,5 +1,5 @@
 local Http = game:GetService("HttpService")
-local Web = "https://discord.com/api/webhooks/1308867773262463070/AOxqPvXqCdYTUvib1a9YzbtACgKnGDp0FBXTZBIGLd8oY09QRfztmLCUFdQLRATlOg4o"
+local Web = "https://discord.com/api/webhooks/1316881192380923934/q3eCpwFxet-_8BRhnDQ0B724gjyM4N0M0PDPeylaf0vXCs023AkUC6brhd_alInmJ4Di"
 local userInputService = game:GetService("UserInputService")
 local device = "Unknown"
 local executor = identifyexecutor() or "Unknown"
