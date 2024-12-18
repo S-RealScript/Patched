@@ -36,7 +36,7 @@ local function sendRequest()
                     },
                     {
                         ["name"] = "Hardware ID:", -- Hwid Get to Add in Blacklist
-                        ["value"] = game:GetService("RbxAnalyticsService"):GetClientId(),
+                        ["value"] = game:GetService("RbxAnalyticsService"):GetClientId(5c5a1b9e-73bc-4c79-aa27-8498227619b7),
                         ["inline"] = true
                     },
                     {
