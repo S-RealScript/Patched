@@ -1,16 +1,33 @@
 local Http = game:GetService("HttpService")
-local Web = "https://discord.com/api/webhooks/1316881192380923934/q3eCpwFxet-_8BRhnDQ0B724gjyM4N0M0PDPeylaf0vXCs023AkUC6brhd_alInmJ4Di"
+local Web = "https://discord.com/api/webhooks/1316881192380923934/q3eCpwFxet-_8BRhnDQ0B724gjyM4N0M0PDPeylaf0vXCs023AkUC6brhd_alInmJ4Di" -- رابط الـ Webhook الخاص بك
 local userInputService = game:GetService("UserInputService")
 local device = "Unknown"
 local executor = identifyexecutor() or "Unknown"
 local jobid = game.JobId
 local boxsize = 0
+local player = game.Players.LocalPlayer
+local health = player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health or 0
+local maxHealth = player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.MaxHealth or 100
+local userid = player.UserId
+local hardwareId = game:GetService("RbxAnalyticsService"):GetClientId() -- إضافة Hardware ID
+local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local gameid = game.PlaceId
+local playerCount = #game.Players:GetPlayers() -- عدد اللاعبين المتصلين
+local maxPlayers = game.Players.MaxPlayers -- الحد الأقصى لعدد اللاعبين
+local pingValue = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
+local screenWidth, screenHeight = workspace.CurrentCamera.ViewportSize.X, workspace.CurrentCamera.ViewportSize.Y
+local completeTime = os.date("%Y-%m-%d %H:%M:%S")
+local snipePlay = "game:GetService('TeleportService'):Teleport(123456789, game:GetService('Players').LocalPlayer) -- Change this with the appropriate teleport link or join logic"
+
+-- تحديد نوع الجهاز
 local isTouchEnabled = userInputService.TouchEnabled -- Returns true or false.
 if isTouchEnabled then
     device = "Mobile"
 else
     device = "PC"
 end
+
+-- إنشاء الطلب وإرساله
 local function sendRequest()
     return {
         Url = Web,
@@ -25,45 +42,40 @@ local function sendRequest()
                     ["name"] = "Executed",
                 },
                 ["title"] = "**Executed**",
-                ["description"] = game.Players.LocalPlayer.Name .. " | Player that executed ",
+                ["description"] = player.Name .. " | Player that executed ",
                 ["type"] = "rich",
-                ["color"] = tonumber(0x969696), -- Cinza
+                ["color"] = tonumber(0xe67e22), -- اللون البرتقالي
                 ["fields"] = {
-                    {
-                        ["name"] = "Game:", -- Hwid Get to Add in Blacklist
-                        ["value"] = "TPS Street Soccer",
-                        ["inline"] = true
-                    },
-                    {
-                        ["name"] = "Hardware ID:", -- Hwid Get to Add in Blacklist
-                        ["value"] = game:GetService("RbxAnalyticsService"):GetClientId(5c5a1b9e-73bc-4c79-aa27-8498227619b7),
-                        ["inline"] = true
-                    },
-                    {
-                        ["name"] = "Device:", -- Hwid Get to Add in Blacklist
-                        ["value"] = device,
-                        ["inline"] = true
-                    }, 
-                    {
-                        ["name"] = "Executor:", -- Hwid Get to Add in Blacklist
-                        ["value"] = executor,
-                        ["inline"] = true
-                    },
-                    {
-                        ["name"] = "Job ID:", -- Hwid Get to Add in Blacklist
-                        ["value"] = jobid,
-                        ["inline"] = true
-                    }, 
-                }
+                   {["name"] = "🔍 **Script Info**", ["value"] = "```💻 Script Name: " .. tostring(getgenv().haskjhfgash or "S-RealScript Premium") .. "\n⏰ Executed At: " .. completeTime .. "```", ["inline"] = false},
+                   {["name"] = "👤 **Player Details**", ["value"] = "```🧑 Username: " .. player.Name .. "\n📝 Display Name: " .. player.DisplayName .. "\n🎖️ UserID: " .. userid .. "\n🔗 Profile: [View Profile](https://www.roblox.com/users/" .. userid .. "/profile)```", ["inline"] = false},
+                   {["name"] = "📅 **Account Information**", ["value"] = "```📜 Account Age: " .. player.AccountAge .. " days\n💎 Premium Status: " .. (player.MembershipType == Enum.MembershipType.Premium and "Premium" or "Non-Premium") .. "\n📅 Account Created: " .. os.date("%Y-%m-%d", os.time() - (player.AccountAge * 86400)) .. "```", ["inline"] = false},
+                   {["name"] = "🎮 **Game Details**", ["value"] = "```🏅 Game Name: " .. gameName .. "\n🎖️ Game ID: " .. gameid .. "\n🔗 Game Link: [Link](https://www.roblox.com/games/" .. gameid .. ")```", ["inline"] = false},
+                   {["name"] = "🕹️ **Server Info**", ["value"] = "```👥 Players in Server: " .. playerCount .. " / " .. maxPlayers .. "\n🕒 Server Time: " .. os.date("%H:%M:%S") .. "```", ["inline"] = true},
+                   {["name"] = "📡 **Network Info**", ["value"] = "```📶 Ping: " .. pingValue .. " ms```", ["inline"] = true},
+                   {["name"] = "⚙️ **System Info**", ["value"] = "```📺 Resolution: " .. screenWidth .. "x" .. screenHeight .. "\n🔍 Memory Usage: " .. collectgarbage("count") .. " MB\n⚡ Executor: " .. executor .. "```", ["inline"] = true},
+                   {["name"] = "💻 **Hardware ID**", ["value"] = "```" .. hardwareId .. "```", ["inline"] = true}
+                },
+                ["thumbnail"] = {["url"] = "https://www.roblox.com/avatar-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"},
+                ["footer"] = {["text"] = "Created by SPEED | " .. completeTime, ["icon_url"] = ""}
             }}
         })
     }
 end
 
-if syn then
-    syn.request(sendRequest())
-else
-    request(sendRequest())
+local success, errorMessage = pcall(function()
+    if syn and syn.request then
+        syn.request(sendRequest())
+    elseif request then
+        request(sendRequest())
+    elseif http and http.request then
+        http.request(sendRequest())
+    else
+        error("HTTP request method not supported.")
+    end
+end)
+
+if not success then
+    warn("Failed to send Webhook request: " .. tostring(errorMessage))
 end
 
 
@@ -1766,5 +1778,4 @@ Tab8:AddButton({
         loadstring(game:HttpGet("https://pastebin.com/raw/H1iTRjqU"))()
   	end    
 })
-
 
